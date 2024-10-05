@@ -1,0 +1,34 @@
+#Hack The Box: "Optimum" Challenge Writeup
+#Objective:
+
+Exploit a vulnerable web application and escalate privileges to root.
+
+#Step 1: Initial Scanning
+
+-Ran nmap to identify open ports:
+
+    'bash
+    'nmap -A -T4 <target_ip>
+
+-Found a web server running HTTP on port 80.
+
+#Step 2: Exploiting HTTP File Upload Vulnerability
+
+-The web application allowed unrestricted file uploads.
+
+-Uploaded a malicious ASPX reverse shell.
+
+-Triggered the shell by accessing the uploaded file via the web browser:
+
+    'bash
+    'http://<target_ip>/uploads/shell.aspx
+
+#Step 3: Privilege Escalation
+
+-Enumerated the system for privilege escalation opportunities and found an outdated Windows operating system.
+-Used a known kernel vulnerability (MS16-032) to escalate privileges and gain root access.
+
+#Lessons Learned:
+
+-File upload vulnerabilities can be exploited to gain system access if proper validation and security checks are not in place.
+-Keeping Windows systems up to date is crucial for preventing privilege escalation exploits
