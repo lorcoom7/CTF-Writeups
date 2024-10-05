@@ -1,0 +1,34 @@
+#TryHackMe: "Red" Challenge Writeup
+#Objective:
+
+Exploit a vulnerable Apache Struts server, gain access, and escalate privileges.
+
+#Step 1: Port Scanning
+
+-Used nmap to scan for open ports:
+
+    'bash
+    'nmap -A -T4 <target_ip>
+
+-Found that port 8080 was hosting an Apache Struts service.
+
+#Step 2: Exploiting Apache Struts (CVE-2017-5638)
+
+-The Apache Struts version was vulnerable to CVE-2017-5638, a remote code execution vulnerability.
+-Used a Python script to exploit the vulnerability and gain a shell:
+
+    'bash
+    'python exploit-struts.py <target_ip> 8080
+
+#Step 3: Privilege Escalation
+
+-Enumerated the system using linpeas and found that the user had the ability to run sudo for all commands.
+-Executed the following to gain root access:
+
+    'bash
+    'sudo su
+
+#Lessons Learned:
+
+-Web applications with known vulnerabilities like Apache Struts can lead to full system compromise.
+-It’s essential to keep web servers up to date with security patches.
