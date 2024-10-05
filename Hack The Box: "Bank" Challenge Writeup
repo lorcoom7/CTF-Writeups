@@ -2,6 +2,7 @@
 #Objective:
 
 This challenge involved exploiting an SQL injection vulnerability on a bank’s website to retrieve sensitive data and escalate privileges.
+
 #Step 1: Initial Reconnaissance
 
     -Scanned the target website and found a login form vulnerable to SQL injection:
