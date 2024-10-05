@@ -2,6 +2,7 @@
 #Objective:
 
 The objective was to exploit a Windows machine vulnerable to the EternalBlue (MS17-010) exploit.
+
 #Step 1: Scanning for Open Ports
 
 -Used nmap to scan the target machine:
