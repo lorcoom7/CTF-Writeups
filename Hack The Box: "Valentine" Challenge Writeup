@@ -1,0 +1,40 @@
+#Hack The Box: "Valentine" Challenge Writeup
+#Objective:
+
+Exploit a vulnerability in OpenSSL to retrieve sensitive information and escalate privileges.
+
+#Step 1: Port Scan and Reconnaissance
+
+-Performed a scan with nmap:
+
+    'bash
+    'nmap -A -T4 <target_ip>
+
+-Found OpenSSL running on port 443 and SSH on port 22.
+
+#Step 2: Exploiting Heartbleed (CVE-2014-0160)
+
+-The OpenSSL version was vulnerable to the Heartbleed vulnerability.
+-Used a Python script to exploit Heartbleed and retrieve memory from the server:
+
+    'bash
+    'python heartbleed-exploit.py <target_ip> 443
+
+-Retrieved sensitive data from the server, including SSH private keys.
+
+#Step 3: Using the Stolen SSH Key
+
+-Used the retrieved private key to log into the system as a user:
+
+    'bash
+    'ssh -i private_key user@<target_ip>
+
+#Step 4: Privilege Escalation
+
+-Enumerated the system and found the user had sudo privileges for certain commands.
+-Used sudo to execute a command as root and gain full control over the system.
+
+#Lessons Learned:
+
+-Heartbleed allows attackers to extract sensitive information directly from a server’s memory.
+-Always monitor and patch vulnerabilities in critical services like OpenSSL.
