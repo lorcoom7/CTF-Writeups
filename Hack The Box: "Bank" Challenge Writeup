@@ -17,7 +17,7 @@ This challenge involved exploiting an SQL injection vulnerability on a bank’s 
     -Exploited the SQL injection vulnerability to dump the database using sqlmap:
 
     ```bash
-    'sqlmap -u "http://<target_ip>/login" --dbs
+    ```bash'sqlmap -u "http://<target_ip>/login" --dbs
 
     -Extracted usernames and passwords from the database.
 
