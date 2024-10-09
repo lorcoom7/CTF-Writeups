@@ -1,38 +1,31 @@
-#Hack The Box: "Bank" Challenge Writeup
-#Objective:
+## Hack The Box: "Bank" Challenge Writeup
 
+## Objective:
 This challenge involved exploiting an SQL injection vulnerability on a bank’s website to retrieve sensitive data and escalate privileges.
 
-#Step 1: Initial Reconnaissance
-
-    -Scanned the target website and found a login form vulnerable to SQL injection:
-
-   ```bash sql
-   ```bash ' OR '1'='1
-
-    -Bypassed the login and accessed the internal dashboard.
-
-#Step 2: Dumping Database Information
-
-    -Exploited the SQL injection vulnerability to dump the database using sqlmap:
-
+## Step 1: Initial Reconnaissance
+- Scanned the target website and found a login form vulnerable to SQL injection:
     ```bash
-    ```bash'sqlmap -u "http://<target_ip>/login" --dbs
+    ' OR '1'='1
+    ```
+- Bypassed the login and accessed the internal dashboard.
 
-    -Extracted usernames and passwords from the database.
+## Step 2: Dumping Database Information
+- Exploited the SQL injection vulnerability to dump the database using sqlmap:
+    ```bash
+    sqlmap -u "http://<target_ip>/login" --dbs
+    ```
+- Extracted usernames and passwords from the database.
 
-#Step 3: Cracking Passwords
+## Step 3: Cracking Passwords
+- Found hashed passwords and used John the Ripper to crack them:
+    ```bash
+    john --wordlist=/usr/share/wordlists/rockyou.txt hashes.txt
+    ```
 
-    -Found hashed passwords and used John the Ripper to crack them:
+## Step 4: Privilege Escalation
+- Used the cracked admin credentials to log into the server via SSH.
 
-    'bash
-    'john --wordlist=/usr/share/wordlists/rockyou.txt hashes.txt
-
-#Step 4: Privilege Escalation
-
-    -Used the cracked admin credentials to log into the server via SSH.
-
-#Lessons Learned:
-
-    -SQL injection is still a major risk for web applications.
-    -Secure password storage using strong hashing mechanisms is crucial to prevent credential leakage.
+## Lessons Learned:
+- SQL injection is still a major risk for web applications.
+- Secure password storage using strong hashing mechanisms is crucial to prevent credential leakage.
