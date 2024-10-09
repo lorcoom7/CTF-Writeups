@@ -1,28 +1,22 @@
-#Hack The Box: "Jail" Challenge Writeup
-#Objective:
+# Hack The Box: "Jail" Challenge Writeup
 
+## Objective:
 To escape a restricted shell environment (jail) and gain root access on the machine.
 
-#Step 1: Accessing the Restricted Shell
+## Step 1: Accessing the Restricted Shell
+- Upon initial login, I was dropped into a restricted shell (rbash) where only a few commands were available.
 
--Upon initial login, I was dropped into a restricted shell (rbash) where only a few commands were available.
+## Step 2: Bypassing the Restricted Shell
+- Found a way to bypass the restricted shell by exploiting the environment variable:
+    ```bash
+    env /bin/sh
+    ```
+- This command provided access to a full shell.
 
-#Step 2: Bypassing the Restricted Shell
+## Step 3: Privilege Escalation
+- Used `sudo -l` to list commands that could be executed as root.
+- Found that a vulnerable command could be executed without a password, allowing privilege escalation to root.
 
--Found a way to bypass the restricted shell by exploiting the environment variable:
-
-    'bash
-    'env /bin/sh
-
--This command provided access to a full shell.
-
-#Step 3: Privilege Escalation
-
-    'Used sudo -l to list commands that could be executed as root.
--Found that a vulnerable command could be executed without a password, allowing privilege escalation to root.
-
-#Lessons Learned:
-
--Restricted shells like rbash can be easily bypassed if improperly configured.
--Always audit sudo permissions to ensure least privilege.
-
+## Lessons Learned:
+- Restricted shells like rbash can be easily bypassed if improperly configured.
+- Always audit sudo permissions to ensure least privilege.
