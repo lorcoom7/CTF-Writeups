@@ -1,47 +1,39 @@
-#TryHackMe: "Overpass" Challenge Writeup
-#Objective:
+# TryHackMe: "Overpass" Challenge Writeup
 
+## Objective:
 Investigate a compromised Linux system, exploit an SSH service, and escalate privileges to root.
 
-#Step 1: Initial Enumeration
+## Step 1: Initial Enumeration
+- Scanned the target system using nmap:
+    ```bash
+    nmap -A -T4 <target_ip>
+    ```
+- Discovered open ports 22 (SSH) and 80 (HTTP).
 
--Scanned the target system using nmap:
+## Step 2: Investigating the Web Server
+- Accessed the web server and found a message indicating that the system had been compromised.
+- Analyzed the web logs and found a password hash in the logs.
 
-    'bash
-    'nmap -A -T4 <target_ip>
+## Step 3: Cracking the Hash
+- Used hashcat to crack the password hash:
+    ```bash
+    hashcat -m 0 hash.txt /usr/share/wordlists/rockyou.txt
+    ```
+- Obtained the password for the SSH service.
 
--Discovered open ports 22 (SSH) and 80 (HTTP).
+## Step 4: Logging into SSH
+- Used the cracked credentials to log in via SSH:
+    ```bash
+    ssh user@<target_ip>
+    ```
 
-#Step 2: Investigating the Web Server
+## Step 5: Privilege Escalation
+- Found that the user had access to the /etc/shadow file, which contained hashed root passwords.
+- Cracked the root password and logged in as root:
+    ```bash
+    su root
+    ```
 
--Accessed the web server and found a message indicating that the system had been compromised.
--Analyzed the web logs and found a password hash in the logs.
-
-#Step 3: Cracking the Hash
-
--Used hashcat to crack the password hash:
-
-    'bash
-    'hashcat -m 0 hash.txt /usr/share/wordlists/rockyou.txt
-
--Obtained the password for the SSH service.
-
-#Step 4: Logging into SSH
-
--Used the cracked credentials to log in via SSH:
-    
-    'bash
-    'ssh user@<target_ip>
-
-#Step 5: Privilege Escalation
-
--Found that the user had access to the /etc/shadow file, which contained hashed root passwords.
--Cracked the root password and logged in as root:
-
-    'bash
-    'su root
-
-#Lessons Learned:
-
--Log files can leak sensitive information, including passwords and hashes.
--Always secure sensitive system files like /etc/shadow to prevent unauthorized access.
+## Lessons Learned:
+- Log files can leak sensitive information, including passwords and hashes.
+- Always secure sensitive system files like /etc/shadow to prevent unauthorized access.
