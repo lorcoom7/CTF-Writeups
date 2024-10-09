@@ -1,55 +1,46 @@
-#TryHackMe: "Mr. Robot" Challenge Writeup
-#Objective:
+# TryHackMe: "Mr. Robot" Challenge Writeup
 
+## Objective:
 Gain access to a vulnerable Linux web server, exploit vulnerabilities, and escalate privileges.
 
-#Step 1: Port Scanning and Enumeration
+## Step 1: Port Scanning and Enumeration
+- Conducted a port scan using nmap:
+    ```bash
+    nmap -A -T4 <target_ip>
+    ```
+- Discovered port 80 (HTTP) and port 443 (HTTPS) open, hosting a WordPress site.
 
--Conducted a port scan using nmap:
+## Step 2: Directory Brute Forcing
+- Used Gobuster to brute force directories and files:
+    ```bash
+    gobuster dir -u http://<target_ip> -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt
+    ```
+- Found /robots.txt containing three disallowed entries:
+    ```bash
+    /key-1-of-3.txt
+    /fsocity.dic
+    /wp-admin
+    ```
 
-    'bash
-    'nmap -A -T4 <target_ip>
+## Step 3: Password Cracking
+- The fsocity.dic file turned out to be a dictionary file used in WordPress login brute-forcing.
+- Used wpscan to brute-force the WordPress admin account:
+    ```bash
+    wpscan --url http://<target_ip> -U admin -P fsocity.dic
+    ```
+- Successfully logged in as admin.
 
--Discovered port 80 (HTTP) and port 443 (HTTPS) open, hosting a WordPress site.
+## Step 4: Uploading Reverse Shell
+- Used the WordPress theme editor to upload a PHP reverse shell and triggered it by visiting the modified page.
 
-#Step 2: Directory Brute Forcing
+## Step 5: Privilege Escalation
+- Ran sudo -l to check sudo privileges and found that the user could run nmap as root.
+- Used the interactive nmap shell to spawn a root shell:
+    ```bash
+    sudo nmap --interactive
+    !sh
+    ```
 
--Used Gobuster to brute force directories and files:
-
-    'bash
-    'gobuster dir -u http://<target_ip> -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt
-
--Found /robots.txt containing three disallowed entries:
-
-       'bash
-       ' /key-1-of-3.txt
-       ' /fsocity.dic
-       ' /wp-admin
-
-#Step 3: Password Cracking
-
--The fsocity.dic file turned out to be a dictionary file used in WordPress login brute-forcing.
--Used wpscan to brute-force the WordPress admin account:
-
-    'bash
-    'wpscan --url http://<target_ip> -U admin -P fsocity.dic
-
--Successfully logged in as admin.
-
-#Step 4: Uploading Reverse Shell
-
--Used the WordPress theme editor to upload a PHP reverse shell and triggered it by visiting the modified page.
-
-#Step 5: Privilege Escalation
-
--Ran sudo -l to check sudo privileges and found that the user could run nmap as root.
--Used the interactive nmap shell to spawn a root shell:
-
-    'bash
-    'sudo nmap --interactive
-    '!sh
-
-#Lessons Learned:
-
--Common files like robots.txt can expose sensitive information.
--Misconfigured services like sudo allow easy privilege escalation.
+## Lessons Learned:
+- Common files like robots.txt can expose sensitive information.
+- Misconfigured services like sudo allow easy privilege escalation.
